@@ -13,7 +13,7 @@ users_collection = db["data"]
 
 class UserCreate(BaseModel):
     email: str
-    phone_number: int
+    phone_number: str
     usergroup: str
     prod_type: str
     twitterid: str
@@ -36,6 +36,7 @@ class UserCreate(BaseModel):
     customer_service_interactions: str = ""
     alternate_phone_number: int = None
 
+
 @app.get("/", response_model=List[UserCreate])
 async def get_todos():
     todos = users_collection.find()
@@ -52,6 +53,17 @@ async def get_users_by_usergroup(usergroup: str):
         result.append(user)
     return result
 
+@app.get("/item/{data}", response_model=List[UserCreate])
+async def get_users_by_email_ph(data: str):
+    users = users_collection.find({
+        "$or": [
+            {"email": data},
+            {"phone_number": data}
+        ]
+    })
+
+    result = [user for user in users]
+    return result
 
 @app.post("/")
 async def post_data(data: UserCreate):
