@@ -2,11 +2,12 @@ from fastapi import FastAPI, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
 from bson import ObjectId
+from typing import List
 
 app = FastAPI()
 
 # MongoDB connection
-client = AsyncIOMotorClient("mongodb://localhost:27017/")
+client = AsyncIOMotorClient("mongodb+srv://harsha:harsha@cluster0.fny6tjl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client["crm"]
 users_collection = db["data"]
 
@@ -64,7 +65,17 @@ async def create_user(user: UserCreate):
     new_user["_id"] = result.inserted_id
     return new_user
 
+# Route to get users by usergroup
+@app.get("/get_users_by_usergroup/{usergroup}", response_model=List[UserCreate])
+async def get_users_by_usergroup(usergroup: str):
+    users = []
+    async for user in users_collection.find({"usergroup": usergroup}):
+        user["_id"] = str(user["_id"])  # Convert ObjectId to string
+        users.append(user)
+    return users
+
+
 # Run the application on port 8000
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=8000, debug=True)
