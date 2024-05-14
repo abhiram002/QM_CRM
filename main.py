@@ -70,7 +70,7 @@ async def create_user(user: UserCreate):
 async def get_users_by_usergroup(usergroup: str):
     users = []
     async for user in users_collection.find({"usergroup": usergroup}):
-        user["_id"] = str(user["_id"])  # Convert ObjectId to string
+        # user["_id"] = str(user["_id"])  # Convert ObjectId to string
         users.append(user)
     return users
 
@@ -78,4 +78,4 @@ async def get_users_by_usergroup(usergroup: str):
 # Run the application on port 8000
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000, debug=True)
+    uvicorn.run(app, host="127.0.0.1", port=8000, debug=True,reload=True)
