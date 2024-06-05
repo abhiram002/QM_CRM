@@ -92,16 +92,15 @@ async def update_user(value: str, data: Dict):
         return JSONResponse(content={"message": "User updated successfully"})
 
 @app.delete("/delete/")
-async def delete_user(email: str, phone_number: str, usergroup: str, prod_type: str):
+async def delete_user(email: str, phone_number: str, usergroup: str):
     delete_result = users_collection.delete_one({
         "email": email,
         "phone_number": phone_number,
-        "usergroup": usergroup,
-        "prod_type": prod_type
+        "usergroup": usergroup
     })
    
     if delete_result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="User not found")
+        return JSONResponse(content={"message": "User not found"})
  
     return JSONResponse(content={"message": "User deleted successfully"})
 
@@ -118,7 +117,9 @@ async def post_data(data: UserCreate):
         #if data already exists, then its going to update the new values which are enterd by the user......
         updated_data = {}
         for field, value in data.model_dump().items():
-            if value is not None: 
+            if field == "prod_type":
+                continue
+            elif value is not None: 
                 updated_data[field] = value
             else:
                 updated_data[field] = is_present.get(field) #if new value is none.. thn keep the existing data as it is....
