@@ -12,7 +12,7 @@ from passlib.context import CryptContext # type: ignore
 # JWT settings
 SECRET_KEY = "crm"  # Change this to a strong secret key
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
  
 app = FastAPI()
  
